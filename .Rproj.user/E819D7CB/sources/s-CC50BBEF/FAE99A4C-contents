@@ -1,0 +1,115 @@
+.libPaths("C:/R/library")
+library(readxl)
+require(janitor)
+library(janitor)
+#install_github('b-rodrigues/brotools')
+require("rlang")
+library(rlang)
+require("stringi")
+library(stringi)
+require("brotools")
+library(brotools)
+
+require("mlbench")
+library(mlbench)
+require("DataExplorer")
+library(DataExplorer)
+require(tidyverse)
+library(tidyverse)
+require(reshape2)
+library(reshape2)
+require("broom")
+library(broom)
+require("VGAM")
+library(VGAM)
+require("geoR")
+library(geoR)
+require("rsample")
+library(rsample)
+require("gtools")
+library("gtools")
+
+require("foreach")
+library("foreach")
+require("doParallel")
+library("doParallel")
+require("cluster")
+library("cluster")
+
+source("http://jtilly.io/install_github/install_github.R")
+#install_github("ropenscilabs/umapr")#devtools::install_github("ropenscilabs/umapr") 
+#install_github('topepo/caret/pkg/caret') #devtools::install_github
+require("caret")
+library("caret")
+require("iml")
+library("iml")
+require("mlr")
+library("mlr")
+require("DALEX")
+library("DALEX")
+
+require("recipes")
+library(recipes)
+require("betareg")
+library(betareg)
+#require("e1071")
+#library("e1071")
+#require("randomForest")
+#library("randomForest")
+require("GGally")
+library("GGally")
+require("ggrepel")
+library("ggrepel")
+require("RColorBrewer")
+library(RColorBrewer)
+require(plotly)
+library(plotly)
+require(shiny)
+library(shiny)
+require(gridExtra)
+library(gridExtra)
+require(XML)
+library(XML)
+
+#detach("package:PythonInR", unload=TRUE)
+#rm() to remove data
+
+
+##### End of Library Declaration
+
+#plan of attack#
+#1. See missing data
+#2. See overall stats
+#3. Visualise box
+
+
+Lemon_Damsel_Fish <- read_excel("C:/Users/ongc/OneDrive - Newcrest Mining Limited/Simulations/R codes/Lemon Damsel Fish.xlsx",  sheet = "Transfer")
+Lemon_Damsel_Fish1 <- clean_names(Lemon_Damsel_Fish)
+Lemon_Damsel_Fish1$fish_id <- as.factor(Lemon_Damsel_Fish1$fish_id)
+Lemon_Damsel_Fish1$fish_size <- as.factor(Lemon_Damsel_Fish1$fish_size)
+Lemon_Damsel_Fish1 <- as.data.frame(Lemon_Damsel_Fish1)
+#Lemon_Damsel_Fish1 <- Lemon_Damsel_Fish1[complete.cases(),]
+
+#View(Lemon_Damsel_Fish)
+
+(sum_stat <- brotools::describe(Lemon_Damsel_Fish))
+
+plot_missing(Lemon_Damsel_Fish)
+plot_bar(Lemon_Damsel_Fish)
+plot_histogram(Lemon_Damsel_Fish)
+
+Lemon_Damsel_Fish2 <- Lemon_Damsel_Fish1 %>% gather(key, response_time_min, 
+                                                    observation_1_min,
+                                                    observation_2_min,
+                                                    observation_3_min,
+                                                    observation_4_min,
+                                                    observation_5_min,
+                                                    - fish_id, -fish_size)
+Lemon_Damsel_Fish2$response_time_min <- as.numeric(Lemon_Damsel_Fish2$response_time_min)
+Lemon_Damsel_Fish2$key <- as.factor(Lemon_Damsel_Fish2$key)
+#Lemon_Damsel_Fish2 <- Lemon_Damsel_Fish1[complete.cases(dataset1),]
+
+Lemon_Damsel_Fish2 %>% ggplot(aes(x = fish_id, y = response_time_min))+
+  geom_boxplot()+
+  facet_wrap(. ~ fish_size, scales = "free_x")
+
